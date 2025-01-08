@@ -29,6 +29,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.AppCompatButton
+import androidx.camera.core.ImageCapture
+import androidx.camera.core.ImageCaptureException
 import androidx.fragment.app.Fragment
 import com.pedro.common.ConnectChecker
 import com.pedro.encoder.input.sources.video.Camera1Source
@@ -118,7 +120,21 @@ class CameraFragment : Fragment(), ConnectChecker {
             prepare()
             if (wasOnPreview) genericStream.startPreview(surfaceView)*/
 
-            activity?.let { it1 -> (genericStream.videoSource as CameraXSource).takePicture("sdcard/test.jpg", it1) }
+            activity?.let { it1 ->
+                (genericStream.videoSource as CameraXSource)
+                    .takePicture("sdcard/test.jpg", object : ImageCapture.OnImageSavedCallback {
+                        override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
+                            // 图片拍摄成功
+                            val savedUri = outputFileResults.savedUri
+                            Log.d("CameraFragment", "Image saved to $savedUri")
+                        }
+
+                        override fun onError(exception: ImageCaptureException) {
+                            // 处理拍照错误
+                            Log.e("CameraFragment", "Error taking picture", exception)
+                        }
+                    })
+            }
         }
 
         txtBitrate = view.findViewById(R.id.txt_bitrate)
@@ -173,7 +189,6 @@ class CameraFragment : Fragment(), ConnectChecker {
                 is Camera1Source -> source.switchCamera()
                 is Camera2Source -> source.switchCamera()
                 is CameraXSource -> {
-                    Log.e("TAG", "onCreateView: asdfasdfasdfasf")
                     source.switchCamera()
                 }
             }

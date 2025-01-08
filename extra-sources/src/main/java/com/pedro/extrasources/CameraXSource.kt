@@ -18,14 +18,12 @@ package com.pedro.extrasources
 
 import android.content.Context
 import android.graphics.SurfaceTexture
-import android.util.Log
 import android.util.Range
 import android.util.Size
 import android.view.Surface
 import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
-import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.Preview
 import androidx.camera.core.resolutionselector.ResolutionSelector
 import androidx.camera.core.resolutionselector.ResolutionStrategy
@@ -145,12 +143,16 @@ class CameraXSource(
 
     lateinit var imageCapture: ImageCapture
 
-    fun takePicture(path: String, context: Context) {
+    fun takePicture(path: String, callBack: ImageCapture.OnImageSavedCallback) {
         val outputOptions = ImageCapture.OutputFileOptions.Builder(File(path)).build()
         imageCapture.takePicture(
             outputOptions,
             ContextCompat.getMainExecutor(context),
-            object : ImageCapture.OnImageSavedCallback {
+            callBack
+        )
+    }
+    /*
+    object : ImageCapture.OnImageSavedCallback {
                 override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
                     // 图片拍摄成功
                     val savedUri = outputFileResults.savedUri
@@ -162,6 +164,5 @@ class CameraXSource(
                     Log.e("Camerasdfsdf", "Error taking picture", exception)
                 }
             }
-        )
-    }
+     */
 }

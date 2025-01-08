@@ -39,4 +39,5 @@ dependencies {
   implementation(libs.androidx.constraintlayout)
   implementation(libs.androidx.appcompat)
   implementation(libs.androidx.multidex)
+  implementation(libs.androidx.camera.core)
 }
