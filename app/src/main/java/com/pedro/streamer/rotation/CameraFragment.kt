@@ -18,6 +18,7 @@ package com.pedro.streamer.rotation
 
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.SurfaceHolder
@@ -33,8 +34,11 @@ import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.fragment.app.Fragment
 import com.pedro.common.ConnectChecker
+import com.pedro.encoder.input.sources.audio.AudioSource
+import com.pedro.encoder.input.sources.audio.MicrophoneSource
 import com.pedro.encoder.input.sources.video.Camera1Source
 import com.pedro.encoder.input.sources.video.Camera2Source
+import com.pedro.encoder.input.sources.video.VideoSource
 import com.pedro.extrasources.CameraXSource
 import com.pedro.library.base.recording.RecordController
 import com.pedro.library.generic.GenericStream
@@ -42,6 +46,7 @@ import com.pedro.library.util.BitrateAdapter
 import com.pedro.streamer.R
 import com.pedro.streamer.utils.PathUtils
 import com.pedro.streamer.utils.toast
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -77,8 +82,11 @@ class CameraFragment : Fragment(), ConnectChecker {
         fun getInstance(): CameraFragment = CameraFragment()
     }
 
+    private val mediaPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
+        .toString() + File.separator + "test" + File.separator
+
     val genericStream: GenericStream by lazy {
-        GenericStream(requireContext(), this).apply {
+        GenericStream(requireContext(), this, CameraXSource(requireContext()), MicrophoneSource()).apply {
             getGlInterface().autoHandleOrientation = true
             getStreamClient().setBitrateExponentialFactor(0.5f)
         }
@@ -122,7 +130,7 @@ class CameraFragment : Fragment(), ConnectChecker {
 
             activity?.let { it1 ->
                 (genericStream.videoSource as CameraXSource)
-                    .takePicture("sdcard/test.jpg", object : ImageCapture.OnImageSavedCallback {
+                    .takePicture(mediaPath, "test.png", object : ImageCapture.OnImageSavedCallback {
                         override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
                             // 图片拍摄成功
                             val savedUri = outputFileResults.savedUri
