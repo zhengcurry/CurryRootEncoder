@@ -68,7 +68,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_test"
+            android:id="@+id/btn_take_pic"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
@@ -76,5 +76,14 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/switch_camera" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_change_size"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="切换分辨率"
+            app:layout_constraintBottom_toBottomOf="@id/btn_take_pic"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="@id/btn_take_pic" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -119,15 +119,7 @@ class CameraFragment : Fragment(), ConnectChecker {
         val bSwitchCamera = view.findViewById<ImageView>(R.id.switch_camera)
         val etUrl = view.findViewById<EditText>(R.id.et_rtp_url)
 
-
-        view.findViewById<AppCompatButton>(R.id.btn_test).setOnClickListener {
-            /*val wasOnPreview = genericStream.isOnPreview
-            genericStream.release()
-            width = 176
-            height = 144
-            prepare()
-            if (wasOnPreview) genericStream.startPreview(surfaceView)*/
-
+        view.findViewById<AppCompatButton>(R.id.btn_take_pic).setOnClickListener {
             activity?.let { it1 ->
                 (genericStream.videoSource as CameraXSource)
                     .takePicture(mediaPath, "test.png", object : ImageCapture.OnImageSavedCallback {
@@ -143,6 +135,14 @@ class CameraFragment : Fragment(), ConnectChecker {
                         }
                     })
             }
+        }
+        view.findViewById<AppCompatButton>(R.id.btn_change_size).setOnClickListener {
+            val wasOnPreview = genericStream.isOnPreview
+            genericStream.release()
+            width = 1080
+            height = 1920
+            prepare()
+            if (wasOnPreview) genericStream.startPreview(surfaceView)
         }
 
         txtBitrate = view.findViewById(R.id.txt_bitrate)
