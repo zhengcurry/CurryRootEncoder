@@ -24,6 +24,7 @@ import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraDevice
 import android.hardware.camera2.CameraManager
 import android.hardware.camera2.CameraMetadata
+import android.hardware.camera2.CaptureFailure
 import android.hardware.camera2.CaptureRequest
 import android.hardware.camera2.CaptureResult
 import android.hardware.camera2.TotalCaptureResult
@@ -768,6 +769,28 @@ class Camera2ApiManager(context: Context) : CameraDevice.StateCallback() {
             prepareCamera(surfaceEncoder, fps)
             openLastCamera()
         }
+    }
+
+    fun takePicture() {
+        val builder = cameraDevice?.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE) ?: return
+        builder.addTarget(surfaceEncoder)
+        builder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE)
+        builder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH)
+
+        val captureCallback = object : CameraCaptureSession.CaptureCallback() {
+            override fun onCaptureCompleted(session: CameraCaptureSession, request: CaptureRequest, result: TotalCaptureResult) {
+                super.onCaptureCompleted(session, request, result)
+                Log.i(TAG, "Photo taken successfully")
+                // 你可以在这里添加其他处理逻辑，例如通知 UI 等
+            }
+
+            override fun onCaptureFailed(session: CameraCaptureSession, request: CaptureRequest, failure: CaptureFailure) {
+                super.onCaptureFailed(session, request, failure)
+                Log.e(TAG, "Photo capture failed")
+            }
+        }
+
+        cameraCaptureSession?.capture(builder.build(), captureCallback, null)
     }
 
     fun removeImageListener() {

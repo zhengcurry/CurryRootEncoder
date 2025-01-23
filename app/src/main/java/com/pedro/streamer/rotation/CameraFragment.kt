@@ -34,11 +34,9 @@ import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.fragment.app.Fragment
 import com.pedro.common.ConnectChecker
-import com.pedro.encoder.input.sources.audio.AudioSource
 import com.pedro.encoder.input.sources.audio.MicrophoneSource
 import com.pedro.encoder.input.sources.video.Camera1Source
 import com.pedro.encoder.input.sources.video.Camera2Source
-import com.pedro.encoder.input.sources.video.VideoSource
 import com.pedro.extrasources.CameraXSource
 import com.pedro.library.base.recording.RecordController
 import com.pedro.library.generic.GenericStream
@@ -120,20 +118,24 @@ class CameraFragment : Fragment(), ConnectChecker {
         val etUrl = view.findViewById<EditText>(R.id.et_rtp_url)
 
         view.findViewById<AppCompatButton>(R.id.btn_take_pic).setOnClickListener {
-            activity?.let { it1 ->
-                (genericStream.videoSource as CameraXSource)
-                    .takePicture(mediaPath, "test.png", object : ImageCapture.OnImageSavedCallback {
-                        override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
-                            // 图片拍摄成功
-                            val savedUri = outputFileResults.savedUri
-                            Log.d("CameraFragment", "Image saved to $savedUri")
-                        }
+            if (genericStream.videoSource is CameraXSource) {
+                activity?.let { it1 ->
+                    (genericStream.videoSource as CameraXSource)
+                        .takePicture(mediaPath, "test.png", object : ImageCapture.OnImageSavedCallback {
+                            override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
+                                // 图片拍摄成功
+                                val savedUri = outputFileResults.savedUri
+                                Log.d("CameraFragment", "Image saved to $savedUri")
+                            }
 
-                        override fun onError(exception: ImageCaptureException) {
-                            // 处理拍照错误
-                            Log.e("CameraFragment", "Error taking picture", exception)
-                        }
-                    })
+                            override fun onError(exception: ImageCaptureException) {
+                                // 处理拍照错误
+                                Log.e("CameraFragment", "Error taking picture", exception)
+                            }
+                        })
+                }
+            } else if (genericStream.videoSource is Camera2Source) {
+
             }
         }
         view.findViewById<AppCompatButton>(R.id.btn_change_size).setOnClickListener {

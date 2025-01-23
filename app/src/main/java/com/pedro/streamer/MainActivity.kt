@@ -32,6 +32,7 @@ import com.pedro.streamer.oldapi.OldApiActivity
 import com.pedro.streamer.file.FromFileActivity
 import com.pedro.streamer.rotation.RotationActivity
 import com.pedro.streamer.screen.ScreenActivity
+import com.pedro.streamer.test.TestActivity
 import com.pedro.streamer.utils.ActivityLink
 import com.pedro.streamer.utils.ImageAdapter
 import com.pedro.streamer.utils.toast
@@ -101,6 +102,12 @@ class MainActivity : AppCompatActivity() {
       ActivityLink(
         Intent(this, RotationActivity::class.java),
         getString(R.string.rotation_rtmp), VERSION_CODES.LOLLIPOP
+      )
+    )
+    activities.add(
+      ActivityLink(
+        Intent(this, TestActivity::class.java),
+        getString(R.string.test), VERSION_CODES.LOLLIPOP
       )
     )
   }
