@@ -37,20 +37,21 @@ class TestActivity : AppCompatActivity(), ConnectChecker {
     private val mediaPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
         .toString() + File.separator + "test" + File.separator
 
-//    private lateinit var surfaceView: OpenGlView
+    private lateinit var surfaceView: OpenGlView
 //    private lateinit var surfaceView: SurfaceView
     val genericStream: RtspCamera2 by lazy {
-        RtspCamera2(this,this).apply {
-            getStreamClient().setBitrateExponentialFactor(0.5f)
+        RtspCamera2(surfaceView,this).apply {
+//            getStreamClient().setBitrateExponentialFactor(0.5f)
             getStreamClient().setOnlyVideo(true)
+            getStreamClient().getCacheSize()
 
         }
     }
     private lateinit var bStartStop: ImageView
     private lateinit var txtBitrate: TextView
-    private var width = 640
-    private var height = 480
-    private val vBitrate = 1200 * 1000
+    private var width = 2560
+    private var height = 1440
+    private val vBitrate = 3500 * 1000
     private val aBitrate = 128 * 1000
     private var recordPath = ""
 
@@ -94,7 +95,7 @@ class TestActivity : AppCompatActivity(), ConnectChecker {
         }
 
         txtBitrate = findViewById(R.id.txt_bitrate)
-        /*surfaceView = findViewById(R.id.surfaceView)
+        surfaceView = findViewById(R.id.surfaceView)
 
         surfaceView.holder.addCallback(object : SurfaceHolder.Callback {
             override fun surfaceCreated(holder: SurfaceHolder) {
@@ -108,7 +109,7 @@ class TestActivity : AppCompatActivity(), ConnectChecker {
                 if (genericStream.isOnPreview) genericStream.stopPreview()
             }
 
-        })*/
+        })
 
         bStartStop.setOnClickListener {
             if (!genericStream.isStreaming) {

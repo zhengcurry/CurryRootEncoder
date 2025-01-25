@@ -10,11 +10,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:aspectRatioMode="adjust" />-->
-    <!--<com.pedro.library.view.OpenGlView
+    <com.pedro.library.view.OpenGlView
         android:id="@+id/surfaceView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:aspectRatioMode="adjust" />-->
+        app:aspectRatioMode="adjust" />
 
     <TextView
         android:id="@+id/txt_bitrate"
