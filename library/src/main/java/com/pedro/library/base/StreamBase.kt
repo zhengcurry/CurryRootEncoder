@@ -37,6 +37,7 @@ import com.pedro.encoder.audio.AudioEncoder
 import com.pedro.encoder.audio.GetAudioData
 import com.pedro.encoder.input.audio.GetMicrophoneData
 import com.pedro.encoder.input.sources.audio.AudioSource
+import com.pedro.encoder.input.sources.audio.NoAudioSource
 import com.pedro.encoder.input.sources.video.NoVideoSource
 import com.pedro.encoder.input.sources.video.VideoSource
 import com.pedro.encoder.utils.CodecUtil
@@ -110,13 +111,13 @@ abstract class StreamBase(
   fun prepareVideo(
     width: Int, height: Int, bitrate: Int, fps: Int = 30, iFrameInterval: Int = 2,
     rotation: Int = 0, profile: Int = -1, level: Int = -1,
-    recordWidth: Int = width, recordHeight: Int = height, recordBitrate: Int = bitrate
+    recordWidth: Int = 0, recordHeight: Int = 0, recordBitrate: Int = bitrate
   ): Boolean {
     if (isStreaming || isRecording || isOnPreview) {
       throw IllegalStateException("Stream, record and preview must be stopped before prepareVideo")
     }
     differentRecordResolution = false
-    if (recordWidth != width && recordHeight != height) {
+    if (recordWidth > 0 && recordHeight > 0) {
       if (recordWidth.toDouble() / recordHeight.toDouble() != width.toDouble() / height.toDouble()) {
         throw IllegalArgumentException("The aspect ratio of record and stream resolution must be the same")
       }
@@ -569,7 +570,8 @@ abstract class StreamBase(
     }
 
     override fun onAudioFormat(mediaFormat: MediaFormat) {
-      recordController.setAudioFormat(mediaFormat)
+      val isOnlyAudio = videoSource is NoVideoSource
+      recordController.setAudioFormat(mediaFormat, isOnlyAudio)
     }
   }
 
@@ -585,7 +587,10 @@ abstract class StreamBase(
     }
 
     override fun onVideoFormat(mediaFormat: MediaFormat) {
-      if (!differentRecordResolution) recordController.setVideoFormat(mediaFormat)
+      if (!differentRecordResolution) {
+        val isOnlyVideo = audioSource is NoAudioSource
+        recordController.setVideoFormat(mediaFormat, isOnlyVideo)
+      }
     }
   }
 
@@ -598,7 +603,8 @@ abstract class StreamBase(
     }
 
     override fun onVideoFormat(mediaFormat: MediaFormat) {
-      recordController.setVideoFormat(mediaFormat)
+      val isOnlyVideo = audioSource is NoAudioSource
+      recordController.setVideoFormat(mediaFormat, isOnlyVideo)
     }
   }
 
