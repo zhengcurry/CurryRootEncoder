@@ -29,6 +29,7 @@ import android.view.SurfaceView;
 import android.view.TextureView;
 import android.view.View;
 
+import com.pedro.common.TimeUtils;
 import com.pedro.encoder.Frame;
 import com.pedro.encoder.input.video.facedetector.FaceDetectorCallback;
 import com.pedro.encoder.input.video.facedetector.UtilsKt;
@@ -390,7 +391,7 @@ public class Camera1ApiManager implements Camera.PreviewCallback, Camera.FaceDet
 
   @Override
   public void onPreviewFrame(byte[] data, Camera camera) {
-    long timeStamp = System.nanoTime() / 1000;
+    long timeStamp = TimeUtils.getCurrentTimeMicro();
     getCameraData.inputYUVData(new Frame(data, rotation, facing == CameraHelper.Facing.FRONT && isPortrait, imageFormat, timeStamp));
     camera.addCallbackBuffer(yuvBuffer);
   }
@@ -656,6 +657,38 @@ public class Camera1ApiManager implements Camera.PreviewCallback, Camera.FaceDet
 
   public boolean isAutoFocusEnabled() {
     return autoFocusEnabled;
+  }
+
+  /**
+   * @param mode values from Camera.Parameters.WHITE_BALANCE_*
+   */
+  public boolean enableAutoWhiteBalance(String mode) {
+    boolean result = false;
+    if (camera != null) {
+      Camera.Parameters parameters = camera.getParameters();
+      List<String> supportedWhiteBalanceModes = parameters.getSupportedWhiteBalance();
+      if (supportedWhiteBalanceModes != null && !supportedWhiteBalanceModes.isEmpty()) {
+        if (supportedWhiteBalanceModes.contains(mode)) {
+          parameters.setWhiteBalance(mode);
+          result = true;
+        }
+      }
+    }
+    return result;
+  }
+
+  public List<String> getAutoWhiteBalanceModesAvailable() {
+    if (camera != null) {
+      Camera.Parameters parameters = camera.getParameters();
+      return parameters.getSupportedWhiteBalance();
+    } else return new ArrayList<>();
+  }
+
+  public String getWhiteBalance() {
+    if (camera != null) {
+      Camera.Parameters parameters = camera.getParameters();
+      return parameters.getWhiteBalance();
+    } else return Camera.Parameters.WHITE_BALANCE_AUTO;
   }
 
   public void enableRecordingHint() {

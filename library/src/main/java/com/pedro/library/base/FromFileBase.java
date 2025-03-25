@@ -30,6 +30,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
 import com.pedro.common.AudioCodec;
+import com.pedro.common.TimeUtils;
 import com.pedro.common.VideoCodec;
 import com.pedro.encoder.EncoderErrorCallback;
 import com.pedro.encoder.TimestampMode;
@@ -118,8 +119,8 @@ public abstract class FromFileBase {
     this.audioDecoderInterface = audioDecoderInterface;
     videoEncoder = new VideoEncoder(getVideoData);
     audioEncoder = new AudioEncoder(getAudioData);
-    videoDecoder = new VideoDecoder(videoDecoderInterface, decoderInterface);
-    audioDecoder = new AudioDecoder(getMicrophoneData, audioDecoderInterface, decoderInterface);
+    videoDecoder = new VideoDecoder(videoDecoderInterface, decoderInterfaceVideo);
+    audioDecoder = new AudioDecoder(getMicrophoneData, audioDecoderInterface, decoderInterfaceAudio);
     recordController = new AndroidMuxerRecordController();
   }
 
@@ -390,7 +391,7 @@ public abstract class FromFileBase {
   }
 
   private void startEncoders() {
-    long startTs = System.nanoTime() / 1000;
+    long startTs = TimeUtils.getCurrentTimeMicro();
     if (videoEnabled) videoEncoder.start(startTs);
     if (audioTrackPlayer != null) audioTrackPlayer.play();
     if (audioEnabled) audioEncoder.start(startTs);
@@ -673,7 +674,7 @@ public abstract class FromFileBase {
     int width = videoDecoder.getWidth();
     int height = videoDecoder.getHeight();
     boolean wasRunning = videoDecoder.isRunning();
-    VideoDecoder videoDecoder = new VideoDecoder(videoDecoderInterface, decoderInterface);
+    VideoDecoder videoDecoder = new VideoDecoder(videoDecoderInterface, decoderInterfaceVideo);
     videoDecoder.setExtractor(this.videoDecoder.getExtractor());
     runnable.run(videoDecoder);
     if (width != videoDecoder.getWidth() || height != videoDecoder.getHeight()) throw new IOException("Resolution must be the same that the previous file");
@@ -687,7 +688,7 @@ public abstract class FromFileBase {
     int sampleRate = audioDecoder.getSampleRate();
     boolean isStereo = audioDecoder.isStereo();
     boolean wasRunning = audioDecoder.isRunning();
-    AudioDecoder audioDecoder = new AudioDecoder(getMicrophoneData, audioDecoderInterface, decoderInterface);
+    AudioDecoder audioDecoder = new AudioDecoder(getMicrophoneData, audioDecoderInterface, decoderInterfaceAudio);
     audioDecoder.setExtractor(this.audioDecoder.getExtractor());
     runnable.run(audioDecoder);
     if (sampleRate != audioDecoder.getSampleRate()) throw new IOException("SampleRate must be the same that the previous file");
@@ -765,12 +766,19 @@ public abstract class FromFileBase {
     }
   };
 
-  private final DecoderInterface decoderInterface = new DecoderInterface() {
+  private final DecoderInterface decoderInterfaceVideo = new DecoderInterface() {
 
     @Override
     public void onLoop() {
-      videoDecoder.reset(glInterface.getSurface());
-      audioDecoder.reset(null);
+      if (videoDecoder.isRunning()) videoDecoder.reset(glInterface.getSurface());
+    }
+  };
+
+  private final DecoderInterface decoderInterfaceAudio = new DecoderInterface() {
+
+    @Override
+    public void onLoop() {
+      if (audioDecoder.isRunning()) audioDecoder.reset(null);
     }
   };
 

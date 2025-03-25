@@ -6,7 +6,6 @@
     <string name="from_file">From file</string>
     <string name="display">Screen</string>
     <string name="rotation_rtmp">Rotation\n(include filters)</string>
-    <string name="test">Test</string>
     <string name="tv_select">Select your streamer</string>
     <string name="hint_protocol">protocol://yourendpoint</string>
     <!--filters-->
@@ -70,5 +69,7 @@
     <string name="camerax">CameraX</string>
     <string name="camera_uvc">CameraUVC</string>
     <string name="bitmap">Bitmap</string>
+    <string name="buffer">Buffer</string>
 
+    <string name="test">Test</string>
 </resources>

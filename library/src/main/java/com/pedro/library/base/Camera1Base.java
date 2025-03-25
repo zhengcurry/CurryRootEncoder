@@ -34,6 +34,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
 import com.pedro.common.AudioCodec;
+import com.pedro.common.TimeUtils;
 import com.pedro.common.VideoCodec;
 import com.pedro.encoder.EncoderErrorCallback;
 import com.pedro.encoder.TimestampMode;
@@ -233,6 +234,21 @@ public abstract class Camera1Base {
 
   public boolean isAutoFocusEnabled() {
     return cameraManager.isAutoFocusEnabled();
+  }
+
+  /**
+   * @param mode values from Camera.Parameters.WHITE_BALANCE_*
+   */
+  public boolean enableAutoWhiteBalance(String mode) {
+    return cameraManager.enableAutoWhiteBalance(mode);
+  }
+
+  public List<String> getAutoWhiteBalanceModesAvailable() {
+    return cameraManager.getAutoWhiteBalanceModesAvailable();
+  }
+
+  public String getWhiteBalance() {
+    return cameraManager.getWhiteBalance();
   }
 
   public boolean resetVideoEncoder() {
@@ -679,7 +695,7 @@ public abstract class Camera1Base {
   }
 
   private void startEncoders() {
-    long startTs = System.nanoTime() / 1000;
+    long startTs = TimeUtils.getCurrentTimeMicro();
     videoEncoder.start(startTs);
     if (audioInitialized) audioEncoder.start(startTs);
     prepareGlView(videoEncoder.getWidth(), videoEncoder.getHeight(), videoEncoder.getRotation());
