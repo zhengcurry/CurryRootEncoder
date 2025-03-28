@@ -72,4 +72,5 @@
     <string name="buffer">Buffer</string>
 
     <string name="test">Test</string>
+    <string name="TestSendData">TestSendData</string>
 </resources>

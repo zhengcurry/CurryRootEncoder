@@ -3,6 +3,7 @@ package com.pedro.encoder.input.sources.video
 import android.graphics.SurfaceTexture
 import android.media.MediaCodec
 import android.media.MediaFormat
+import android.util.Log
 import android.view.Surface
 import com.pedro.common.TimeUtils
 import com.pedro.common.VideoCodec
@@ -70,7 +71,9 @@ class BufferVideoSource(
         if (!running) return
         when (format) {
             Format.RGB, Format.ARGB -> {
+                Log.e("curry", "setBuffer: 1" )
                 val yuv = YUVUtil.ARGBtoYUV420SemiPlanar(data, width, height)
+                Log.e("curry", "setBuffer: 2" )
                 queue.offer(Frame(yuv, 0, yuv.size, TimeUtils.getCurrentTimeMicro()))
             }
             else -> {

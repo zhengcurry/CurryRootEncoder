@@ -152,10 +152,11 @@ public class VideoEncoder extends BaseEncoder implements GetCameraData {
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && CodecUtil.isCBRModeSupported(encoder, type)) {
         Log.i(TAG, "set bitrate mode CBR");
         videoFormat.setInteger(MediaFormat.KEY_BITRATE_MODE,
-            MediaCodecInfo.EncoderCapabilities.BITRATE_MODE_CBR);
+            MediaCodecInfo.EncoderCapabilities.BITRATE_MODE_VBR);
       } else {
         Log.i(TAG, "bitrate mode CBR not supported using default mode");
       }
+      videoFormat.setInteger(MediaFormat.KEY_PROFILE, MediaCodecInfo.CodecProfileLevel.AVCProfileHigh);
       // Rotation by encoder.
       // Removed because this is ignored by most encoders, producing different results on different devices
       //  videoFormat.setInteger(MediaFormat.KEY_ROTATION, rotation);

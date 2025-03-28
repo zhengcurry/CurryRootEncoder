@@ -289,6 +289,10 @@ public abstract class BaseEncoder implements EncoderCallback {
     callback = new MediaCodec.Callback() {
       @Override
       public void onInputBufferAvailable(@NonNull MediaCodec mediaCodec, int inBufferIndex) {
+        // 如果 index 长期不可用，说明编码器过载
+        if (inBufferIndex == -1) {
+          Log.e("curry", "Input buffer starved, reduce bitrate!");
+        }
         try {
           inputAvailable(mediaCodec, inBufferIndex);
         } catch (IllegalStateException e) {
