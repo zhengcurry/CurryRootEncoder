@@ -27,6 +27,7 @@ import android.util.Log;
 import android.util.Range;
 import android.util.Size;
 import android.view.MotionEvent;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -35,7 +36,7 @@ import androidx.annotation.RequiresApi;
 import com.pedro.common.AudioCodec;
 import com.pedro.common.TimeUtils;
 import com.pedro.common.VideoCodec;
-import com.pedro.encoder.EncoderErrorCallback;
+import com.pedro.encoder.CodecErrorCallback;
 import com.pedro.encoder.TimestampMode;
 import com.pedro.encoder.audio.AudioEncoder;
 import com.pedro.encoder.audio.GetAudioData;
@@ -46,6 +47,7 @@ import com.pedro.encoder.input.video.Camera2ApiManager;
 import com.pedro.encoder.input.video.CameraCallbacks;
 import com.pedro.encoder.input.video.CameraHelper;
 import com.pedro.encoder.input.video.CameraOpenException;
+import com.pedro.encoder.input.video.FrameCapturedCallback;
 import com.pedro.encoder.input.video.facedetector.FaceDetectorCallback;
 import com.pedro.encoder.utils.CodecUtil;
 import com.pedro.encoder.video.FormatVideoEncoder;
@@ -137,7 +139,7 @@ public abstract class Camera2Base {
      * Set a callback to know errors related with Video/Audio encoders
      * @param encoderErrorCallback callback to use, null to remove
      */
-    public void setEncoderErrorCallback(EncoderErrorCallback encoderErrorCallback) {
+    public void setEncoderErrorCallback(CodecErrorCallback encoderErrorCallback) {
         videoEncoder.setEncoderErrorCallback(encoderErrorCallback);
         videoEncoderRecord.setEncoderErrorCallback(encoderErrorCallback);
         audioEncoder.setEncoderErrorCallback(encoderErrorCallback);
@@ -162,6 +164,10 @@ public abstract class Camera2Base {
      */
     public boolean enableFaceDetection(FaceDetectorCallback faceDetectorCallback) {
         return cameraManager.enableFaceDetection(faceDetectorCallback);
+    }
+
+    public void enableFrameCaptureCallback(FrameCapturedCallback frameCapturedCallback) {
+        cameraManager.enableFrameCaptureCallback(frameCapturedCallback);
     }
 
     public void disableFaceDetection() {
@@ -946,8 +952,8 @@ public abstract class Camera2Base {
         return cameraManager.setColorCorrectionGains(red, greenEven, greenOdd, blue);
     }
 
-    public boolean tapToFocus(MotionEvent event) {
-        return cameraManager.tapToFocus(event);
+    public boolean tapToFocus(View view, MotionEvent event) {
+        return cameraManager.tapToFocus(view, event);
     }
 
     public GlInterface getGlInterface() {
